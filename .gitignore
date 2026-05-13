@@ -1,2 +1,9 @@
+# VS Code
+.vscode
+
+# Platform IO
+.pio
+
 # Scripts
 compush.sh
+compush.bat
