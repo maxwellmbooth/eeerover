@@ -6,11 +6,14 @@
 #define ENV_NAME "controller"
 
 #include "shared/common.h"
+#include "controller/webserver.h"
+#include "controller/ui/html.h"
 
 // pin definitions
-constexpr int test_button = 5;
+constexpr int test_button = 6;
 
 // wifi variables
+WiFiServer server(controller_web_port);
 WiFiUDP udp;
 
 void sendCommand(const char* cmd) {
@@ -25,23 +28,22 @@ void setup() {
   serial_log("Booted.");
   
   // wifi shield setup
-  WiFi.begin(rover_ssid);
-
-  int attempts = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    attempts++;
-    serial_log("Connection to rover attempt #%d (status: %d)", attempts, WiFi.status());
-
-    if (attempts > 20) {
-      serial_log("Connection to rover timeout.");
-      while(true);
-    }
+  WiFi.noLowPowerMode();
+  //WiFi.config(controller_ip);
+  uint8_t ap_status = WiFi.beginAP(controller_ssid, 1);
+  if (ap_status != WL_AP_LISTENING) {
+    serial_log("Failed to start access point, error code: %d", ap_status);
+    while (true);
   }
-  serial_log("Connected to rover.");
+  serial_log("Access point started.");
 
   // begin wifi services
+  server.begin();
   udp.begin(controller_udp_port);
+
+  IPAddress ip = WiFi.localIP();
+  serial_log("IP address: %d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
+  serial_log("Webpage port: %d", controller_web_port);
 
   // pin setup
   pinMode(LED_BUILTIN, OUTPUT);
@@ -51,9 +53,28 @@ void setup() {
 }
 
 void loop() {
-  serial_log("%d", digitalRead(test_button));
   if (digitalRead(test_button) == HIGH) {
     sendCommand("0");
   }
-  delay(500);
+  
+  WiFiClient client = server.available();
+  if (client) {
+    serial_log("Client connected");
+
+    // wait for user to connect
+    while (client.connected() && !client.available()) {
+      delay(10);
+    }
+
+    // take http request in (do nothing with it so far)
+    while (client.available()) {
+      client.read();
+    }
+
+    // send webpage back
+    send_response(client, "text/html", homepage);
+
+    delay(1);
+    client.stop();
+  }
 }

@@ -1,13 +1,15 @@
 #pragma once
 #include <Arduino.h>
 
-constexpr char rover_ssid[] = "morley";
-constexpr uint16_t rover_web_port = 80;
-constexpr uint16_t rover_udp_port = 4810;
-constexpr uint16_t controller_udp_port = 4811;
+constexpr char controller_ssid[] = "morley";
+constexpr char controller_pass[] = "eeerover26";
 
-const IPAddress rover_ip(192, 168, 1, 1);
-const IPAddress controller_ip(192, 168, 1, 2);
+constexpr uint16_t controller_web_port = 80;
+constexpr uint16_t controller_udp_port = 4810;
+constexpr uint16_t rover_udp_port = 4811;
+
+const IPAddress controller_ip(192, 168, 1, 1);
+const IPAddress rover_ip(192, 168, 1, 2);
 
 inline void serial_log(const char* msg, ...) {
   char buf[128];
