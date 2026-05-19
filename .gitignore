@@ -2,7 +2,7 @@
 .vscode
 
 # Platform IO
-.pio
+rover/.pio
 
 # Scripts
 compush.sh

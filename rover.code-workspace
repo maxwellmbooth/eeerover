@@ -1,0 +1,6 @@
+{
+  "folders": [
+    { "name": "rover", "path": "rover" },
+    { "name": "app", "path": "app" }
+  ]
+}
