@@ -7,8 +7,14 @@
 
 #include "common.h"
 
-// pin definitions
-constexpr int test_button = 6;
+// pin mappings
+constexpr uint32_t pin_ldir = 9;
+constexpr uint32_t pin_len = 8;
+constexpr uint32_t pin_rdir = 12;
+constexpr uint32_t pin_ren = 11;
+
+// test variables
+bool toggle_led = LOW;
 
 // wifi variables
 WiFiUDP udp;
@@ -42,18 +48,36 @@ void setup() {
   serial_log("UDP port: %d", rover_port);
 
   // pin setup
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
+  analogWriteResolution(10);
 
-  pinMode(test_button, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
+  pinMode(pin_len, OUTPUT);
+  pinMode(pin_ldir, OUTPUT);
+  pinMode(pin_ren, OUTPUT);
+  pinMode(pin_rdir, OUTPUT);
 }
 
 void loop() {
   int packetSize = udp.parsePacket();
   if (packetSize) {
-    char buf[16];
+    char buf[32];
+    memset(buf, 0, sizeof(buf));
     udp.read(buf, sizeof(buf));
-    Serial.println(buf);
+
+    char *end;
+    float throttle = strtof(buf, &end);
+    float steering = strtof(end + 1, nullptr);
+
+    float left = constrain(throttle + steering, -1.0f, 1.0f); // differential steering
+    float right = constrain(throttle - steering, -1.0f, 1.0f);
+
+    digitalWrite(pin_ldir, (left > 0.0f) ? LOW : HIGH);
+    analogWrite(pin_len, abs(left * 1023.0f));
+
+    digitalWrite(pin_rdir, (right > 0.0f) ? HIGH : LOW);
+    analogWrite(pin_ren, abs(right * 1023.0f));
   }
   delay(1);
 }
