@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "DRV5053RAQLPG") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/DRV5053RAQLPG/DRV5053RAQLPG.kicad_sym") (options "") (descr ""))
+)

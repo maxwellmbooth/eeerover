@@ -8,7 +8,6 @@ constexpr uint16_t rover_port = 4810;
 constexpr uint16_t app_port = 4811;
 
 const IPAddress rover_ip(192, 168, 1, 1);
-//const IPAddress app_ip(192, 168, 1, 1);
 
 inline void serial_log(const char* msg, ...) {
   char buf[128];
