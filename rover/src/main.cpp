@@ -146,7 +146,7 @@ void loop() {
     char buf[512];
     snprintf(buf, sizeof(buf), "%d,%d", mag, ir_classification);
 
-    udp.print(buf);
+    udp.write((uint8_t*)buf, strlen(buf));
     udp.endPacket();
   }
   int val = analogRead(pin_mag);
