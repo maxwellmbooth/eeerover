@@ -13,7 +13,7 @@ app_port = 4811
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-telemetry = {"data":""}
+telemetry = {"mag":"", "ir":""}
 
 def app_init():
   pygame.init()
@@ -51,9 +51,14 @@ def app_init():
     screen.fill((0, 0, 0))
     
     font = pygame.font.SysFont("Arial", 24)
-    data = telemetry["data"]
-    text = font.render(f"{data}", True, (255, 255, 255))
+    mag = telemetry["mag"]
+    text = font.render(f"{mag}", True, (255, 255, 255))
     screen.blit(text, (50, 50))
+
+    font = pygame.font.SysFont("Arial", 24)
+    ir = telemetry["ir"]
+    text = font.render(f"{ir}", True, (255, 255, 255))
+    screen.blit(text, (50, 150))
 
     pygame.display.flip()
     clock.tick(60)
@@ -66,7 +71,8 @@ def udp_rx_loop():
       data, _ = sock.recvfrom(512)
       data_parts = data.decode().split(",")
 
-      telemetry["data"] = data_parts[0]
+      telemetry["mag"] = data_parts[0]
+      telemetry["ir"] = data_parts[1]
     except socket.timeout:
       pass
 

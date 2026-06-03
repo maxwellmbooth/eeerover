@@ -14,6 +14,7 @@ constexpr uint32_t pin_rdir = 12;
 constexpr uint32_t pin_ren = 11;
 
 constexpr uint32_t pin_mag = 1;
+constexpr uint32_t pin_ir = 9;
 
 // communication variables
 IPAddress app_ip(0, 0, 0, 0);
@@ -22,12 +23,17 @@ bool app_connected = false;
 // wifi variables
 WiFiUDP udp;
 
-void sendCommand(const char* cmd) {
-  udp.beginPacket(rover_ip, rover_port);
-  udp.write(cmd);
-  udp.endPacket();
+// sensor variables
+unsigned long elapsed_time = 0;
+unsigned long old_elapsed_time = 0;
+volatile int ir_pulse_count = 0;
+
+// interrupt functions
+void ir_pulse_detected() {
+  ir_pulse_count++;
 }
 
+// setup
 void setup() {
   delay(3000);
   Serial.begin(115200);
@@ -63,9 +69,40 @@ void setup() {
   pinMode(pin_rdir, OUTPUT);
   
   pinMode(pin_mag, INPUT);
+  pinMode(pin_ir, INPUT);
+
+  // setup interrupts
+  attachInterrupt(digitalPinToInterrupt(pin_ir), ir_pulse_detected, RISING);
 }
 
 void loop() {
+  elapsed_time = millis() - old_elapsed_time;
+
+  // get ir sensor data every 200ms
+  int ir_classification = 0;
+
+  if (elapsed_time > 200) {
+    noInterrupts();
+    int ir_pulse_count_total = ir_pulse_count;
+    ir_pulse_count = 0;
+    interrupts();
+
+    float ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) elapsed_time;
+
+    if (ir_pulse_rate > 430) {
+      ir_classification = 547;
+    } else if (ir_pulse_rate > 10) {
+      ir_classification = 312;
+    } else {
+      ir_classification = 0;
+    }
+
+    old_elapsed_time = millis();
+  }
+
+  // get hall sensor data
+  int mag = analogRead(pin_mag);
+
   // receive packets
   int packetSize = udp.parsePacket();
   if (packetSize) {
@@ -105,7 +142,11 @@ void loop() {
   // send packets
   if (app_connected) {
     udp.beginPacket(app_ip, app_port);
-    udp.print("test");
+
+    char buf[512];
+    snprintf(buf, sizeof(buf), "%d,%d", mag, ir_classification);
+
+    udp.print(buf);
     udp.endPacket();
   }
   int val = analogRead(pin_mag);
