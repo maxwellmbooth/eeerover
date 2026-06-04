@@ -27,6 +27,7 @@ WiFiUDP udp;
 unsigned long elapsed_time = 0;
 unsigned long old_elapsed_time = 0;
 volatile int ir_pulse_count = 0;
+float ir_pulse_rate = 0;
 
 // interrupt functions
 void ir_pulse_detected() {
@@ -79,7 +80,7 @@ void loop() {
   elapsed_time = millis() - old_elapsed_time;
 
   // get ir sensor data every 200ms
-  int ir_classification = 0;
+  int ir_classification;
 
   if (elapsed_time > 200) {
     noInterrupts();
@@ -87,15 +88,16 @@ void loop() {
     ir_pulse_count = 0;
     interrupts();
 
-    float ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) elapsed_time;
+    ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) elapsed_time;
 
-    if (ir_pulse_rate > 430) {
-      ir_classification = 547;
-    } else if (ir_pulse_rate > 10) {
-      ir_classification = 312;
-    } else {
-      ir_classification = 0;
-    }
+    // MAYBE HAVE IN PYTHON?
+    // if (ir_pulse_rate > 430) {
+    //   ir_classification = 547;
+    // } else if (ir_pulse_rate > 10) {
+    //   ir_classification = 312;
+    // } else {
+    //   ir_classification = 0;
+    // }
 
     old_elapsed_time = millis();
   }
@@ -144,7 +146,7 @@ void loop() {
     udp.beginPacket(app_ip, app_port);
 
     char buf[512];
-    snprintf(buf, sizeof(buf), "%d,%d", mag, ir_classification);
+    snprintf(buf, sizeof(buf), "%d,%d", mag, ir_pulse_rate);
 
     udp.write((uint8_t*)buf, strlen(buf));
     udp.endPacket();
