@@ -5,4 +5,5 @@
 	(lib (name "MCP6022") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/MCP6022/footprints.pretty") (options "") (descr ""))
 	(lib (name "TLE2072CP") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TLE2072CP/footprints.pretty") (options "") (descr ""))
 	(lib (name "header1x4") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/header1x4") (options "") (descr ""))
+	(lib (name "ICL7660CPA") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/ICL7660CPA/footprints.pretty") (options "") (descr ""))
 )

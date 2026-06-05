@@ -544,6 +544,10 @@
       {
         "netclass": "Power",
         "pattern": "GND"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "-5V"
       }
     ]
   },
@@ -551,7 +555,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "../fab/",
       "specctra_dsn": "",
       "vrml": ""
     },
@@ -729,7 +733,7 @@
         "uuid": "5b9ba070-2d7b-4d88-af39-a5590ff5d693"
       }
     ],
-    "used_designators": "Cbp3-4,PWR_IN1,U3-5,IR_IN1,D5,Rpullup1,#PWR18-19,#PWR28-34,MAG_IN1,C4,C7,R5-6,Rhpf1,Rf1,Rf13-14,Rf23,METRO_IR1,Cf1,Chpf1,J1,J6-7,Cin1,Clpf1,COIL_IN1,Cth1,METRO_AGE1,METRO_US1,Rg1,Rhyst1,RL1,US_IN1,METRO_OUT1",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [

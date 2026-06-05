@@ -3,4 +3,5 @@
 	(lib (name "DRV5053RAQLPG") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/DRV5053RAQLPG/DRV5053RAQLPG.kicad_sym") (options "") (descr ""))
 	(lib (name "2026-06-04_15-17-56") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TLE2072CP/2026-06-04_15-17-56.kicad_sym") (options "") (descr ""))
 	(lib (name "2212S-04SG-85") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/header1x4/2212S-04SG-85.kicad_sym") (options "") (descr ""))
+	(lib (name "2026-06-05_10-32-33") (type "KiCad") (uri "C:/Users/mboot/Imperial/yr1/rover/board/symbols/ICL7660CPA/2026-06-05_10-32-33.kicad_sym") (options "") (descr ""))
 )
