@@ -14,18 +14,19 @@ constexpr uint32_t pin_rdir = 12;
 constexpr uint32_t pin_ren = 11;
 
 constexpr uint32_t pin_mag = 1;
-constexpr uint32_t pin_ir = 9;
+constexpr uint32_t pin_ir = 0;
 
 // communication variables
 IPAddress app_ip(0, 0, 0, 0);
 bool app_connected = false;
+unsigned long last_packet_time = 0;
 
 // wifi variables
 WiFiUDP udp;
 
 // sensor variables
-unsigned long elapsed_time = 0;
-unsigned long old_elapsed_time = 0;
+unsigned long ir_elapsed_time = 0;
+unsigned long ir_old_elapsed_time = 0;
 volatile int ir_pulse_count = 0;
 float ir_pulse_rate = 0;
 
@@ -77,18 +78,18 @@ void setup() {
 }
 
 void loop() {
-  elapsed_time = millis() - old_elapsed_time;
+  ir_elapsed_time = millis() - ir_old_elapsed_time;
 
   // get ir sensor data every 200ms
   int ir_classification;
 
-  if (elapsed_time > 200) {
+  if (ir_elapsed_time > 200) {
     noInterrupts();
     int ir_pulse_count_total = ir_pulse_count;
     ir_pulse_count = 0;
     interrupts();
 
-    ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) elapsed_time;
+    ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) ir_elapsed_time;
 
     // MAYBE HAVE IN PYTHON?
     // if (ir_pulse_rate > 430) {
@@ -99,7 +100,7 @@ void loop() {
     //   ir_classification = 0;
     // }
 
-    old_elapsed_time = millis();
+    ir_old_elapsed_time = millis();
   }
 
   // get hall sensor data
@@ -139,6 +140,15 @@ void loop() {
       app_connected = false;
     }
 
+    last_packet_time = millis();
+  } else if (millis() - last_packet_time > 500) {
+      serial_log("WARNING: Packet timout. (0x10)");
+
+      app_connected = false;
+      serial_log("App disconnected.");
+
+      analogWrite(pin_len, 0); // stop motors if timed out
+      analogWrite(pin_ren, 0);
   }
 
   // send packets
