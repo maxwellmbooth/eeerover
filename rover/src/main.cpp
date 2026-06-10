@@ -20,6 +20,7 @@ constexpr uint32_t pin_mag = A1;
 
 // communication variables
 IPAddress app_ip(0, 0, 0, 0);
+bool connected_once = false;
 bool app_connected = false;
 unsigned long last_packet_time = 0;
 
@@ -35,7 +36,7 @@ volatile int ir_pulse_count = 0;
 const char* ir = "Not detected";
 
 constexpr int us_threshold = 1861; // 1.5V for 12-bit adc
-constexpr int us_samples = 3;
+constexpr int us_samples = 10;
 const char* us = "Not detected";
 
 const char* mag = "Not detected";
@@ -69,26 +70,26 @@ void receive_packet() {
         digitalWrite(pin_rdir, (right > 0.0f) ? HIGH : LOW);
         analogWrite(pin_ren, abs(right * 1023.0f));
 
-        if (info == 1) {
+        if (!app_connected) {
             serial_log("App connected.");
-            app_connected = true;
+        }
 
-            app_ip = udp.remoteIP();
-            serial_log("User IP address: %d.%d.%d.%d", app_ip[0], app_ip[1], app_ip[2], app_ip[3]);
-        } else if (info == 2) {
-            serial_log("App disconnected.");
+        connected_once = true;
+        app_connected = true; // any received packet means app is connected
+        app_ip = udp.remoteIP();
+
+        if (info == 1) {
+            serial_log("App disconnected."); //app tells shutdown
             app_connected = false;
         }
 
         last_packet_time = millis();
-    } else if (millis() - last_packet_time > 500) {
+    } else if (app_connected && millis() - last_packet_time > 500) {
         serial_log("WARNING: Packet timeout. (0x10)");
-
-        app_connected = false;
         serial_log("App disconnected.");
-
-        analogWrite(pin_len, 0); // stop motors if timed out
-        analogWrite(pin_ren, 0);
+        app_connected = false;
+        analogWrite(pin_len, 0);
+        analogWrite(pin_ren, 0); // stop motors if timeout
     }
 }
 
@@ -161,6 +162,7 @@ void process_us() {
     if (sample_count >= us_samples) {
         int avg = sum / sample_count;
         us = (avg > us_threshold) ? "Detected" : "Not detected";
+        serial_log("avg: %d", analogRead(pin_us));
 
         sum = 0;
         sample_count = 0;
@@ -179,9 +181,28 @@ void process_mag() {
     }
 }
 
+// check if udp stops for extended time and reset if so
+void check_and_recover() {
+    if (connected_once) {
+        unsigned long silence = millis() - last_packet_time;
+        static unsigned long last_reinit = 0;
+        if (silence > 3000 && millis() - last_reinit > 3000) {   // soft attempt first
+            serial_log("Link silent 3s -- restarting UDP socket.");
+            udp.stop();
+            udp.begin(rover_port);
+            last_reinit = millis();
+        }
+        if (silence > 20000) {                                    // still dead -> full reset
+            serial_log("Link silent 20s -- resetting board.");
+            delay(50);
+            NVIC_SystemReset();                                  // SAMD21 software reset = reset button
+        }
+    }
+}
+
 // setup
 void setup() {
-    delay(3000);
+    delay(500);
     Serial.begin(115200);
     serial_log("Booted.");
 
@@ -247,4 +268,6 @@ void loop() {
 
         last_send = millis();
     }
+
+    check_and_recover();
 }

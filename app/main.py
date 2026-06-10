@@ -173,14 +173,14 @@ def app_init(rover):
     console.write("test")
 
     info = 0
+    was_online = False
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running, info = False, 2
+                running, info = False, 1
             elif event.type == pygame.JOYDEVICEADDED:
                 pygame_joystick = pygame.joystick.Joystick(event.device_index)
-                pygame_joystick.init()
             elif event.type == pygame.JOYDEVICEREMOVED:
                 pygame_joystick = None
             elif pygame_joystick is None:
@@ -197,6 +197,9 @@ def app_init(rover):
 
         rover.send(throttle, steering, info)
         tele, online = rover.snapshot()
+        if online != was_online:
+            console.write("link up" if online else "link lost")
+            was_online = online
 
         screen.fill(BG)   # draw frame
 
@@ -219,7 +222,7 @@ def app_init(rover):
             value_card(screen, rect, lab, val, sub, acc, fonts)
 
         jp = pygame.Rect(576, 92, 300, HEIGHT - 92 - 24)   # joystick panel
-        panel(screen, jp, radius=14)
+        panel(screen, jp, radius = 14)
         text(screen, "MANUAL CONTROL", fonts["label"], TEXT_DIM, (jp.x + 20, jp.y + 18))
         joystick.draw(screen, active = (pygame_joystick is not None or joystick.dragging))
 
@@ -246,6 +249,6 @@ if __name__ == "__main__":
     try:
         app_init(rover)
     except KeyboardInterrupt:
-        rover.send(0.0, 0.0, 2)
+        rover.send(0.0, 0.0, 1)
         rover.close()
         pygame.quit()

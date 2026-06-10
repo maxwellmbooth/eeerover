@@ -22,7 +22,7 @@ class RoverConnection:
         self._sock.bind(("0.0.0.0", self.app_port))
         self._sock.settimeout(1.0)
         self._running = True
-        self._thread = threading.Thread(target=self._rx_loop, daemon=True)
+        self._thread = threading.Thread(target = self._rx_loop, daemon = True)
         self._thread.start()
 
     # send control packet
@@ -48,7 +48,7 @@ class RoverConnection:
         while self._running:
             try:
                 data, _ = self._sock.recvfrom(512)
-                parts = data.decode().strip().split(",")
+                parts = data.decode(errors = "replace").strip().split(",")
                 with self._lock:
                     for i, k in enumerate(self.keys):
                         if i < len(parts):
@@ -56,5 +56,24 @@ class RoverConnection:
                     self._last_rx = time.time()
             except socket.timeout:
                 pass
+            except ConnectionResetError:
+                pass   # Windows: send to an unreachable rover resets the next recv -- ignore
             except OSError:
-                break
+                if not self._running:
+                    break
+                self._reopen()   # socket went bad -> rebuild it and carry on
+
+    def _reopen(self):
+        try:
+            self._sock.close()
+        except OSError:
+            pass
+        while self._running:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                s.bind(("0.0.0.0", self.app_port))
+                s.settimeout(1.0)
+                self._sock = s
+                return
+            except OSError:
+                time.sleep(0.5)   # port not free yet -> wait and retry
