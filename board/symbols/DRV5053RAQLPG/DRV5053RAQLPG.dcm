@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP DRV5053RAQLPG
-D Texas Instruments DRV5053RAQLPG Hall Effect Sensor IC
-K
-F http://www.ti.com/lit/gpn/DRV5053
-$ENDCMP
-#
-#End Doc Library

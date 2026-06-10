@@ -89,7 +89,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
@@ -2983,6 +2982,17 @@
 			(uuid "4d1ae8d9-4800-44ea-a25a-09b5a7b54e56")
 		)
 		(embedded_fonts no)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TLE2072CP/TLE2072CP.stp"
+			(offset
+				(xyz -3.75 3.75 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P2.50mm"
 		(layer "F.Cu")
@@ -4475,6 +4485,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TerminalBlock/CTB1202_2BK.stp"
+			(offset
+				(xyz 2.5 -0.5 6.25)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
 			)
 		)
 	)
@@ -7795,6 +7816,17 @@
 			(uuid "62a41137-89be-48df-b040-fce7e558dd57")
 		)
 		(embedded_fonts no)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/ICL7660CPA/ICL7660CPA+.stp"
+			(offset
+				(xyz 3.75 -3.75 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P2.50mm"
 		(layer "F.Cu")
@@ -8792,6 +8824,17 @@
 			(uuid "8737941e-be34-48bf-b2f1-47fa03224fce")
 		)
 		(embedded_fonts no)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/MCP6022/MCP6022-I_P.stp"
+			(offset
+				(xyz 3.75 -3.75 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal"
 		(layer "F.Cu")
@@ -10890,6 +10933,17 @@
 				(xyz 0 0 0)
 			)
 		)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TerminalBlock/CTB1202_2BK.stp"
+			(offset
+				(xyz 2.5 -0.5 6.25)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "LM393P:P8"
 		(layer "F.Cu")
@@ -11639,6 +11693,17 @@
 			(uuid "84d9c183-de7e-4ab3-b3ef-0d7d20372316")
 		)
 		(embedded_fonts no)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/LM393P/LM393P.stp"
+			(offset
+				(xyz -3.75 3.75 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.50mm"
 		(layer "F.Cu")
@@ -13930,6 +13995,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/TerminalBlock/CTB1202_2BK.stp"
+			(offset
+				(xyz 2.5 -0.5 6.25)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
 			)
 		)
 	)
@@ -16986,6 +17062,17 @@
 			(uuid "f5c5e594-b701-44f5-98d5-81d3597eebf0")
 		)
 		(embedded_fonts no)
+		(model "C:/Users/mboot/Imperial/yr1/rover/board/symbols/MCP6022/MCP6022-I_P.stp"
+			(offset
+				(xyz 3.75 -3.75 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
 		(layer "F.Cu")
@@ -18586,6 +18673,46 @@
 		(uuid "fca14bed-96b2-4d05-9ced-ec33be3f1037")
 	)
 	(segment
+		(start 185.705113 78.5)
+		(end 185.705113 84.245113)
+		(width 0.2)
+		(layer "F.Cu")
+		(net "Net-(U5-CAP+)")
+		(uuid "7bcf55c4-d10e-4fc1-a2ec-0bd910a7497e")
+	)
+	(segment
+		(start 185.705113 84.245113)
+		(end 188.69 87.23)
+		(width 0.2)
+		(layer "F.Cu")
+		(net "Net-(U5-CAP+)")
+		(uuid "fc848317-59ac-47c0-884f-ed847a831cb2")
+	)
+	(segment
+		(start 185.305113 88.925113)
+		(end 188.69 92.31)
+		(width 0.2)
+		(layer "F.Cu")
+		(net "Net-(U5-CAP-)")
+		(uuid "4f9c1b8f-a42d-4da0-8c17-0402a13d9505")
+	)
+	(segment
+		(start 185.305113 80.6)
+		(end 185.305113 88.925113)
+		(width 0.2)
+		(layer "F.Cu")
+		(net "Net-(U5-CAP-)")
+		(uuid "5e910888-5f1b-44bb-a775-15bf04452ffd")
+	)
+	(segment
+		(start 183.205113 78.5)
+		(end 185.305113 80.6)
+		(width 0.2)
+		(layer "F.Cu")
+		(net "Net-(U5-CAP-)")
+		(uuid "f28b9197-f350-4c68-949c-1e2620d11f11")
+	)
+	(segment
 		(start 113.417542 99.146829)
 		(end 116.917542 99.146829)
 		(width 0.2)
@@ -18752,46 +18879,6 @@
 		(layer "F.Cu")
 		(net "Net-(U3B-+)")
 		(uuid "7614b760-d24f-4f7a-a039-6b83c385c806")
-	)
-	(segment
-		(start 185.705113 78.5)
-		(end 185.705113 84.245113)
-		(width 0.2)
-		(layer "F.Cu")
-		(net "Net-(U5-CAP+)")
-		(uuid "7bcf55c4-d10e-4fc1-a2ec-0bd910a7497e")
-	)
-	(segment
-		(start 185.705113 84.245113)
-		(end 188.69 87.23)
-		(width 0.2)
-		(layer "F.Cu")
-		(net "Net-(U5-CAP+)")
-		(uuid "fc848317-59ac-47c0-884f-ed847a831cb2")
-	)
-	(segment
-		(start 185.305113 88.925113)
-		(end 188.69 92.31)
-		(width 0.2)
-		(layer "F.Cu")
-		(net "Net-(U5-CAP-)")
-		(uuid "4f9c1b8f-a42d-4da0-8c17-0402a13d9505")
-	)
-	(segment
-		(start 185.305113 80.6)
-		(end 185.305113 88.925113)
-		(width 0.2)
-		(layer "F.Cu")
-		(net "Net-(U5-CAP-)")
-		(uuid "5e910888-5f1b-44bb-a775-15bf04452ffd")
-	)
-	(segment
-		(start 183.205113 78.5)
-		(end 185.305113 80.6)
-		(width 0.2)
-		(layer "F.Cu")
-		(net "Net-(U5-CAP-)")
-		(uuid "f28b9197-f350-4c68-949c-1e2620d11f11")
 	)
 	(zone
 		(net "GND")
