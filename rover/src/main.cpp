@@ -32,10 +32,12 @@ constexpr uint32_t age_baud_rate = 600;
 constexpr uint32_t age_msg_length = 3;
 char age[age_msg_length + 1] = {0}; // +1 for null termination
 
+constexpr int ir_547_threshold = 360;
+constexpr int ir_312_threshold = 10;
 volatile int ir_pulse_count = 0;
 const char* ir = "Not detected";
 
-constexpr int us_threshold = 1861; // 1.5V for 12-bit adc
+constexpr int us_threshold = 600; // 1.5V for 12-bit adc
 constexpr int us_samples = 10;
 const char* us = "Not detected";
 
@@ -134,10 +136,12 @@ void process_ir() {
         interrupts();
 
         float ir_pulse_rate = (float) ir_pulse_count_total * 1000.0f / (float) elapsed_time;
+        
+        Serial.println(ir_pulse_rate);
 
-        if (ir_pulse_rate > 430) {
+        if (ir_pulse_rate > ir_547_threshold) {
           ir = "547";
-        } else if (ir_pulse_rate > 10) {
+        } else if (ir_pulse_rate > ir_312_threshold) {
           ir = "312";
         } else {
           ir = "Not detected";
@@ -147,7 +151,7 @@ void process_ir() {
     }
 }
 
-// process us by average of 3 results
+// process us by average of 10 results
 void process_us() {
     static unsigned long last_time = 0;
     static long sum = 0;
@@ -162,7 +166,6 @@ void process_us() {
     if (sample_count >= us_samples) {
         int avg = sum / sample_count;
         us = (avg > us_threshold) ? "Detected" : "Not detected";
-        serial_log("avg: %d", analogRead(pin_us));
 
         sum = 0;
         sample_count = 0;
@@ -186,16 +189,16 @@ void check_and_recover() {
     if (connected_once) {
         unsigned long silence = millis() - last_packet_time;
         static unsigned long last_reinit = 0;
-        if (silence > 3000 && millis() - last_reinit > 3000) {   // soft attempt first
+        if (silence > 3000 && millis() - last_reinit > 3000) {
             serial_log("Link silent 3s -- restarting UDP socket.");
             udp.stop();
-            udp.begin(rover_port);
+            udp.begin(rover_port); // restart UDP link if no connection
             last_reinit = millis();
         }
-        if (silence > 20000) {                                    // still dead -> full reset
-            serial_log("Link silent 20s -- resetting board.");
+        if (silence > 60000) {
+            serial_log("Link silent 60s -- resetting board.");
             delay(50);
-            NVIC_SystemReset();                                  // SAMD21 software reset = reset button
+            NVIC_SystemReset(); // reset if no connection
         }
     }
 }
@@ -238,8 +241,10 @@ void setup() {
     pinMode(pin_ren, OUTPUT);
     pinMode(pin_rdir, OUTPUT);
     
-    pinMode(pin_mag, INPUT);
+    //pinMode(pin_age, INPUT);
     pinMode(pin_ir, INPUT);
+    pinMode(pin_us, INPUT);
+    pinMode(pin_mag, INPUT);
 
     // setup interrupts
     attachInterrupt(digitalPinToInterrupt(pin_ir), ir_pulse_detected, RISING);

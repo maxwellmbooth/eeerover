@@ -34,6 +34,16 @@ BLUE = (96, 165, 250)
 CONSOLE_BG = (12, 12, 12)
 CONSOLE_BORDER = (25, 24, 26)
 
+# Rock types
+ROCK_TYPES = {
+    ("547", "Detected", "Down"): "Basaltoid",
+    ("312", "Not detected", "Down"): "Gravion",
+    ("312", "Detected", "Up"): "Regolix",
+    ("547", "Not detected", "Up"): "Lunarite",
+}
+
+def classify_rock(tele):
+    return ROCK_TYPES.get((tele["ir"], tele["us"], tele["mag"]), "Unknown")
 
 # UI helper functions
 def aa_circle(surf, x, y, r, color, border = None, bw = 0):
@@ -168,9 +178,8 @@ def app_init(rover):
     }
 
     pygame_joystick = pygame.joystick.Joystick(0) if pygame.joystick.get_count() > 0 else None
-    joystick = VirtualJoystick(cx = 726, cy = 300, radius = 110)
+    joystick = VirtualJoystick(cx = 726, cy = 248, radius = 95)
     console = Console((24, 428, 534, HEIGHT - 428 - 24))   # strip under the card grid
-    console.write("test")
 
     info = 0
     was_online = False
@@ -204,7 +213,7 @@ def app_init(rover):
         screen.fill(BG)   # draw frame
 
         bar = pygame.Rect(24, 20, WIDTH - 48, 52)   # top bar
-        panel(screen, bar, radius=14, fill=PANEL)
+        panel(screen, bar, radius = 14, fill = PANEL)
         text(screen, "mrover26", fonts["title"], TEXT, (bar.x + 20, bar.centery), "midleft")
         status_pill(screen, bar.right - 16, bar.centery, online, fonts)
 
@@ -221,15 +230,20 @@ def app_init(rover):
             rect = (x0 + col * (cw + gap), y0 + row * (ch + gap), cw, ch)
             value_card(screen, rect, lab, val, sub, acc, fonts)
 
-        jp = pygame.Rect(576, 92, 300, HEIGHT - 92 - 24)   # joystick panel
-        panel(screen, jp, radius = 14)
-        text(screen, "MANUAL CONTROL", fonts["label"], TEXT_DIM, (jp.x + 20, jp.y + 18))
+        joystick_panel = pygame.Rect(576, 92, 300, 318)   # joystick panel
+        panel(screen, joystick_panel, radius = 14)
+        text(screen, "MANUAL CONTROL", fonts["label"], TEXT_DIM, (joystick_panel.x + 20, joystick_panel.y + 18))
         joystick.draw(screen, active = (pygame_joystick is not None or joystick.dragging))
 
         badge_col = ACCENT if pygame_joystick else TEXT_DIM   # source badge + numeric readout
-        text(screen, source, fonts["small"], badge_col, (jp.right - 20, jp.y + 18), "topright")
-        text(screen, f"throttle  {throttle:+.2f}", fonts["small"], TEXT_DIM, (jp.centerx, jp.bottom - 56), "midtop")
-        text(screen, f"steering  {steering:+.2f}", fonts["small"], TEXT_DIM, (jp.centerx, jp.bottom - 34), "midtop")
+        text(screen, source, fonts["small"], badge_col, (joystick_panel.right - 20, joystick_panel.y + 18), "topright")
+        text(screen, f"throttle  {throttle:+.2f}", fonts["small"], TEXT_DIM, (joystick_panel.centerx, joystick_panel.bottom - 56), "midtop")
+        text(screen, f"steering  {steering:+.2f}", fonts["small"], TEXT_DIM, (joystick_panel.centerx, joystick_panel.bottom - 34), "midtop")
+
+        rock_type_panel = pygame.Rect(576, 428, 300, 148)   # rock classification panel
+        panel(screen, rock_type_panel, radius = 14)
+        text(screen, "ROCK TYPE", fonts["label"], TEXT_DIM, (rock_type_panel.x + 20, rock_type_panel.y + 18))
+        text(screen, classify_rock(tele), fonts["value"], TEXT, (rock_type_panel.centerx, rock_type_panel.centery + 14), "center")
 
         console.draw(screen, fonts["mono"])
 
